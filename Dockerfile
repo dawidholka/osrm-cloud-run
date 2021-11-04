@@ -1,12 +1,18 @@
 FROM osrm/osrm-backend
 
-RUN mkdir -p /data
-ADD http://download.geofabrik.de/europe/poland/pomorskie-latest.osm.pbf /data
+ARG DOWNLOAD_LINK=http://download.geofabrik.de/europe/poland/pomorskie-latest.osm.pbf
+ENV DOWNLOAD_LINK ${DOWNLOAD_LINK}
 
-RUN osrm-extract -p /opt/car.lua /data/pomorskie-latest.osm.pbf && \
-     osrm-partition /data/pomorskie-latest.osrm &&  osrm-customize \
-    /data/pomorskie-latest.osrm  && rm /data/pomorskie-latest.osm.pbf
+ARG FILENAME=pomorskie-latest
+ENV FILENAME ${FILENAME}
+
+RUN mkdir -p /data
+ADD $DOWNLOAD_LINK /data
+
+RUN osrm-extract -p /opt/car.lua /data/$FILENAME.osm.pbf && \
+     osrm-partition /data/$FILENAME.osrm &&  osrm-customize \
+    /data/$FILENAME.osrm  && rm /data/$FILENAME.osm.pbf
 
 EXPOSE 5000
 
-CMD osrm-routed --algorithm mld /data/pomorskie-latest.osrm
+CMD osrm-routed --algorithm mld /data/$FILENAME.osrm
