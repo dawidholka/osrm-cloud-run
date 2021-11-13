@@ -15,4 +15,4 @@ RUN osrm-extract -p /opt/car.lua /data/$FILENAME.osm.pbf && \
 
 EXPOSE 5000
 
-CMD osrm-routed --algorithm mld /data/$FILENAME.osrm
+CMD osrm-routed --max-table-size=1000 --algorithm mld /data/$FILENAME.osrm
